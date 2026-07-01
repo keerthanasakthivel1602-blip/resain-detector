@@ -1,7 +1,7 @@
 import streamlit as st
 import pickle
 
-with open("model1.pkl", "rb") as file:
+with open("model.pkl", "rb") as file:
     loaded_model_sample_01 = pickle.load(file)
 
 with open("vectorizer.pkl", "rb") as file:
