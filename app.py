@@ -1,46 +1,56 @@
 import streamlit as st
 import pickle
+import pandas as pd
 
+# Load the trained model
 with open("model.pkl", "rb") as file:
-    loaded_model_sample_01 = pickle.load(file)
+    model = pickle.load(file)
 
-with open("vectorizer.pkl", "rb") as file:
-    vectorizer = pickle.load(file)
+st.title("🍇 Raisin Classification")
 
-st.set_page_config(
-    page_title="Spam Detector",
-    layout="centered"
+st.write("Enter the details below")
+
+# User Inputs
+Area = st.number_input("Area", value=80000.0)
+
+MajorAxisLength = st.number_input("Major Axis Length", value=400.0)
+
+MinorAxisLength = st.number_input("Minor Axis Length", value=250.0)
+
+Eccentricity = st.number_input(
+    "Eccentricity",
+    min_value=0.0,
+    max_value=1.0,
+    value=0.80
 )
 
-st.title("Email Spam Detection using SVM")
+ConvexArea = st.number_input("Convex Area", value=85000.0)
 
-email = st.text_area(
-    "Enter Email",
-    height=220,
-    placeholder="Paste your email here..."
+Extent = st.number_input(
+    "Extent",
+    min_value=0.0,
+    max_value=1.0,
+    value=0.70
 )
 
-col1, col2 = st.columns(2)
+Perimeter = st.number_input("Perimeter", value=1100.0)
 
-with col1:
-    predict = st.button("Predict")
+# Predict Button
+if st.button("Predict"):
 
-with col2:
-    clear = st.button("Clear")
+    input_data = pd.DataFrame({
+        "Area":[Area],
+        "MajorAxisLength":[MajorAxisLength],
+        "MinorAxisLength":[MinorAxisLength],
+        "Eccentricity":[Eccentricity],
+        "ConvexArea":[ConvexArea],
+        "Extent":[Extent],
+        "Perimeter":[Perimeter]
+    })
 
-if predict:
-    if not email.strip():
-        st.warning("Please enter an email.")
+    prediction = model.predict(input_data)
+
+    if prediction[0] == 1:
+        st.success("Prediction : Kecimen Raisin")
     else:
-        vector = vectorizer.transform([email])
-        prediction = loaded_model_sample_01.predict(vector)[0]
-
-        st.divider()
-
-        if prediction == 1:
-            st.error("This Email is SPAM")
-        else:
-            st.success("This Email is NOT SPAM")
-
-if clear:
-    st.rerun()
+        st.success("Prediction : Besni Raisin")
